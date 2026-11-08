@@ -1,0 +1,11 @@
+{
+  "command.haveitpickup.print.on": "§a[Debug] Container print mode enabled.",
+  "command.haveitpickup.print.off": "§c[Debug] Container print mode disabled.",
+
+  "command.haveitpickup.add.success": "§aAdded to whitelist: §e%s",
+  "command.haveitpickup.add.exists": "§cAlready in whitelist: %s",
+  "command.haveitpickup.add.invalid": "§cInvalid MenuType: %s",
+
+  "command.haveitpickup.remove.success": "§aRemoved from whitelist: §e%s",
+  "command.haveitpickup.remove.fail": "§cNot in whitelist: %s"
+}

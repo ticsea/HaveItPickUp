@@ -1,0 +1,11 @@
+{
+    "command.haveitpickup.print.on": "§a[调试] 容器打印模式已开启。",
+    "command.haveitpickup.print.off": "§c[调试] 容器打印模式已关闭。",
+
+    "command.haveitpickup.add.success": "§a已加入白名单: §e%s",
+    "command.haveitpickup.add.exists": "§c该 ID 已经在白名单中: %s",
+    "command.haveitpickup.add.invalid": "§c无效的容器 ID: %s",
+
+    "command.haveitpickup.remove.success": "§a已从白名单移除: §e%s",
+    "command.haveitpickup.remove.fail": "§c该 ID 不在白名单中: %s"
+}
