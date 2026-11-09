@@ -11,6 +11,9 @@ import net.minecraft.client.gui.screens.inventory.*;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,18 +41,16 @@ public class ContainerOpen {
             }
         }
 
+        if (!Config.isInWhitelist(screenKey)) return;
+
         // 创建按钮
         String key = screenKey;
 
         WhiteListButton whiteListButton = new WhiteListButton(0, 0, 16, 16, 16, 16, key, btn -> {});
         AButton aButton = new AButton(0, 0, 16, 16, key, btn -> {});
 
-        if (Config.isInWhitelist(screenKey)) {
-            event.addListener(aButton);
+        event.addListener(aButton);
 //            event.addListener(whiteListButton);
-        } else {
-            return;
-        }
 
         // 获取容器界面的矩形信息
         int guiLeft = containerScreen.getGuiLeft();
@@ -57,11 +58,27 @@ public class ContainerOpen {
         int guiWidth = containerScreen.getXSize();
         int guiHeight = containerScreen.getYSize();
 
+        // 计算位置
+        AbstractContainerMenu menu = containerScreen.getMenu();
+        int bx = 0;
+        int by = 0;
+        for (Slot slot : menu.slots) {
+            if (slot.container instanceof Inventory && slot.getContainerSlot() == 13) {
+                // 找到了！这个 slot 就是你需要的
+                //                int menuIndex = menu.slots.indexOf(slot); // 拿到菜单索引
+                int screenX = guiLeft + slot.x;
+                int screenY = guiTop + slot.y;
+                bx = screenX;
+                by = screenY - aButton.getHeight();
+                break;
+            }
+        }
+
         // 1. X轴：绝对是容器的水平居中
         int buttonX = guiLeft + (guiWidth - aButton.getWidth()) / 2;
 
-        aButton.setX(buttonX);
-        aButton.setY(guiTop + guiHeight - 100);
+        aButton.setX(bx);
+        aButton.setY(by);
         whiteListButton.setX(buttonX);
         whiteListButton.setY(guiTop);
     }
