@@ -1,7 +1,7 @@
 package me.afk.haveitpickup.mixin;
 
-import me.afk.haveitpickup.Config;
-import me.afk.haveitpickup.util.WhiteListUtil;
+import me.afk.haveitpickup.ClientConfig;
+import me.afk.haveitpickup.util.ContainerSlotHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -13,9 +13,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -34,11 +32,11 @@ public class MixinClientPacketListener {
         MultiPlayerGameMode gameMode = mc.gameMode;
 
         if (mc.screen instanceof AbstractContainerScreen<?> containerScreen) {
-            String screenKey = WhiteListUtil.getScreenKey(containerScreen);
-            if (!Config.isInWhitelist(screenKey)) return;
-        }
+            String screenKey = ContainerSlotHelper.getScreenKey(containerScreen);
+            if (!ClientConfig.isInWhitelist(screenKey)) return;
+        } else return;
 
-        if (!Config.isOn() || player == null || gameMode == null) return;
+        if (!ClientConfig.isOn() || player == null || gameMode == null) return;
 
 
         Map<Item, CompoundTag> playerInventoryItems = new HashMap<>();
