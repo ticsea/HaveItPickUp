@@ -1,10 +1,10 @@
 package me.afk.haveitpickup.event;
 
-import me.afk.haveitpickup.Config;
+import me.afk.haveitpickup.ClientConfig;
 import me.afk.haveitpickup.HaveItPickup;
 import me.afk.haveitpickup.gui.widget.AButton;
 import me.afk.haveitpickup.gui.widget.WhiteListButton;
-import me.afk.haveitpickup.util.WhiteListUtil;
+import me.afk.haveitpickup.util.ContainerSlotHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.*;
@@ -29,8 +29,10 @@ public class ContainerOpen {
             return;
         }
 
-        String screenKey = WhiteListUtil.getScreenKey(containerScreen);
-        if (Config.isDebugPrintMode) {
+        String screenKey = ContainerSlotHelper.getScreenKey(containerScreen);
+
+        // 打印 ID
+        if (ClientConfig.isDebugPrintMode) {
             Minecraft minecraft = Minecraft.getInstance();
             LocalPlayer player = minecraft.player;
             if (player != null && screenKey != null) {
@@ -41,45 +43,30 @@ public class ContainerOpen {
             }
         }
 
-        if (!Config.isInWhitelist(screenKey)) return;
+        // 防御
+        if (!ClientConfig.isInWhitelist(screenKey)) return;
+        // --- 获取玩家实例 ---
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return;
 
         // 创建按钮
         String key = screenKey;
 
-        WhiteListButton whiteListButton = new WhiteListButton(0, 0, 16, 16, 16, 16, key, btn -> {});
+//        WhiteListButton whiteListButton = new WhiteListButton(0, 0, 16, 16, 16, 16, key, btn -> {});
+//        event.addListener(whiteListButton);
         AButton aButton = new AButton(0, 0, 16, 16, key, btn -> {});
-
         event.addListener(aButton);
-//            event.addListener(whiteListButton);
 
-        // 获取容器界面的矩形信息
-        int guiLeft = containerScreen.getGuiLeft();
-        int guiTop = containerScreen.getGuiTop();
-        int guiWidth = containerScreen.getXSize();
-        int guiHeight = containerScreen.getYSize();
-
-        // 计算位置
-        AbstractContainerMenu menu = containerScreen.getMenu();
-        int bx = 0;
-        int by = 0;
-        for (Slot slot : menu.slots) {
-            if (slot.container instanceof Inventory && slot.getContainerSlot() == 13) {
-                // 找到了！这个 slot 就是你需要的
-                //                int menuIndex = menu.slots.indexOf(slot); // 拿到菜单索引
-                int screenX = guiLeft + slot.x;
-                int screenY = guiTop + slot.y;
-                bx = screenX;
-                by = screenY - aButton.getHeight();
-                break;
-            }
+        // 位置计算
+        int[] xy = ClientConfig.getButtonOffset(screenKey);
+        if (xy == null) {
+            xy = ContainerSlotHelper.buildButtonAnchor(containerScreen, player);
+            ClientConfig.setButtonOffset(screenKey, xy[0], xy[1]);
         }
 
-        // 1. X轴：绝对是容器的水平居中
-        int buttonX = guiLeft + (guiWidth - aButton.getWidth()) / 2;
-
-        aButton.setX(bx);
-        aButton.setY(by);
-        whiteListButton.setX(buttonX);
-        whiteListButton.setY(guiTop);
+        aButton.setX(xy[0]);
+        aButton.setY(xy[1]);
+//        whiteListButton.setX(buttonX);
+//        whiteListButton.setY(guiTop);
     }
 }
