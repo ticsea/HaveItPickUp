@@ -1,6 +1,6 @@
 package me.afk.haveitpickup.gui.widget;
 
-import me.afk.haveitpickup.Config;
+import me.afk.haveitpickup.ClientConfig;
 import me.afk.haveitpickup.HaveItPickup;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -23,7 +23,7 @@ public class AButton extends ExtendedButton {
         super(x, y, width, height, Component.empty(), btn ->
         {
             // 点击时，改变全局状态
-            Config.toggle();
+            ClientConfig.toggle();
             // 然后执行外部传进来的逻辑
             onPress.onPress(btn);
         }, DEFAULT_NARRATION);
@@ -34,7 +34,7 @@ public class AButton extends ExtendedButton {
 
     @Override
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        if (Config.isOn()) {
+        if (ClientConfig.isOn()) {
             // 1. 画出底图
             guiGraphics.blit(BACKGROUND, this.getX(), this.getY(), 0, 0, this.width, this.height, texWidth, texHeight);
 

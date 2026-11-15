@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import me.afk.haveitpickup.Config;
+import me.afk.haveitpickup.ClientConfig;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -47,9 +47,9 @@ public class ClientCommands {
     }
 
     private static int executeTogglePrint(CommandContext<CommandSourceStack> context) {
-        Config.isDebugPrintMode = !Config.isDebugPrintMode;
+        ClientConfig.isDebugPrintMode = !ClientConfig.isDebugPrintMode;
 
-        String key = Config.isDebugPrintMode ? "command.haveitpickup.print.on" : "command.haveitpickup.print.off";
+        String key = ClientConfig.isDebugPrintMode ? "command.haveitpickup.print.on" : "command.haveitpickup.print.off";
         context.getSource().sendSuccess(() -> Component.translatable(key), false);
         return 1;
     }
@@ -67,8 +67,8 @@ public class ClientCommands {
         }
 
         // 3. 存入白名单
-        if (!Config.isInWhitelist(id)) {
-            Config.addToWhitelist(id);
+        if (!ClientConfig.isInWhitelist(id)) {
+            ClientConfig.addToWhitelist(id);
             context.getSource().sendSuccess(() -> Component.translatable("command.haveitpickup.add.success", id), false);
             return 1;
         } else {
@@ -80,8 +80,8 @@ public class ClientCommands {
     private static int executeRemove(CommandContext<CommandSourceStack> context) {
         String id = StringArgumentType.getString(context, "containerId");
 
-        if (Config.isInWhitelist(id)) {
-            Config.removeFromWhitelist(id);
+        if (ClientConfig.isInWhitelist(id)) {
+            ClientConfig.removeFromWhitelist(id);
             // 带参数的翻译文本
             context.getSource().sendSuccess(() -> Component.translatable("command.haveitpickup.remove.success", id), false);
             return 1;
@@ -94,7 +94,7 @@ public class ClientCommands {
     // 补全当前白名单里的 ID（用于 remove）
     private static SuggestionProvider<CommandSourceStack> suggestWhitelist() {
         return (context, builder) -> {
-            List<String> whitelist = Config.getWhitelist();
+            List<String> whitelist = ClientConfig.getWhitelist();
             return SharedSuggestionProvider.suggest(whitelist, builder);
         };
     }
